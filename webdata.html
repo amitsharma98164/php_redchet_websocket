@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Client</title>
+</head>
+<body>
+    <script>
+        const socket = new WebSocket('ws://localhost:8080');
+
+        socket.addEventListener('open', function() {
+            socket.send('Hello, socket connection working fine!');
+        });
+
+        socket.addEventListener('message', function(event) {
+            console.log('Received: ', event.data);
+        });
+    </script>
+</body>
+</html>

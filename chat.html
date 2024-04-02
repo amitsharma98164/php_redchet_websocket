@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Chat</title>
+</head>
+<body>
+    <div id="chat"></div>
+    <input type="text" id="messageInput" placeholder="Type a message...">
+    <button onclick="sendMessage()">Send</button>
+    
+    <script>
+        const conn = new WebSocket('ws://localhost:8080');
+
+        conn.onopen = function(e) {
+            console.log("Connection established!");
+        };
+
+        conn.onmessage = function(e) {
+    console.log("Received message:", e.data);
+    
+    // Parse the received JSON message object
+    const messageObject = JSON.parse(e.data);
+    
+    // Extract username and message from the message object
+    const username = messageObject.username;
+    const message = messageObject.message.split(': ')[1]; // Extract the message part
+    
+    // Append the received message to the chat area
+    const chatArea = document.getElementById('chat');
+    // chatArea.innerHTML += `<p><strong>User ${messageObject.connectionId}:</strong> ${message}</p>`;
+    if (username === "You") {
+        // Message from the current user
+        chatArea.innerHTML += `<p><strong>${username}:</strong> ${message}</p>`;
+    } else {
+        // Message from other users
+        chatArea.innerHTML += `<p><strong>User ${messageObject.connectionId}:</strong> ${message}</p>`;
+    }
+};
+
+
+
+
+        conn.onerror = function(error) {
+            console.error("WebSocket error:", error);
+        };
+
+        function sendMessage() {
+            console.log("Sending message...");
+            
+            // Get the message from the input field
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value.trim();
+            
+            if (message !== '') {
+                console.log(message);
+                
+                // Send the message to the server
+                conn.send(message);
+
+                // Clear the input field
+                messageInput.value = '';
+                
+                // Append the sent message to the chat area
+                // const chatArea = document.getElementById('chat');
+                // chatArea.innerHTML += `<p><strong>You:</strong> ${message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
